@@ -1,0 +1,179 @@
+Pertama-tama siapkan beberapa fasiltas pendukung MediaWiki seperti MySQL Server, PHP dll, antara lain dapat di install melalui perintah
+
+Ubuntu 16.04
+
+sudo apt-get install apache2 php7.0 php7.0-xmlrpc php7.0-mysql php7.0-gd php7.0-cli php7.0-curl \
+mysql-client mysql-server libphp-adodb libgd-dev php7.0-curl php-pear \
+php7.0-cli php7.0-common libapache2-mod-php7.0 php7.0 php7.0-mysql php7.0-fpm \
+php7.0-curl php7.0-gd php7.0-mysql php7.0-bz2 php7.0-xml imagemagick git php7.0-mbstring
+
+Ubuntu 18.04
+
+sudo apt-get install apache2 php php-xmlrpc php-mysql php-gd php-cli php-curl \
+mysql-client mysql-server libphp-adodb libgd-dev php-pear \
+php-common libapache2-mod-php php-fpm \
+php-bz2 php-xml imagemagick git php-mbstring
+
+a2dismod php5
+a2enmod php7.0
+service apache2 stop
+service apache2 start
+
+Set locale
+
+sudo locale-gen id_ID.UTF-8
+
+Database
+
+Siapkan
+
+mysql
+mysql> SET PASSWORD FOR root@localhost=PASSWORD('password');
+
+Jika password Root MySQL database sudah di set maka kita dapat langsung mengkonfigurasi MySQL menggunakan perintah
+
+mysql -u root -p
+Enter password:
+create database mediawiki;
+grant INSERT,SELECT on root.* to mediawiki@localhost;
+grant CREATE, INSERT, SELECT, DELETE, UPDATE, DROP, INDEX on mediawiki.* to mediawiki@localhost identified by 'mediawikipass';
+grant CREATE, INSERT, SELECT, DELETE, UPDATE, DROP, INDEX on mediawiki.* to mediawiki identified by 'mediawikipass';
+exit
+
+Bagi anda yang masih belajar. Asumsi root password 123456. Anda dapat juga menggunakan di bawah ini, tapi jangan digunakan di server yang operasional di Internet
+
+
+# mysql -u root -p123456
+
+create database mediawiki;
+grant ALL on root.* to mediawiki@localhost;
+grant ALL on mediawiki.* to mediawiki@localhost identified by 'mediawiki';
+grant ALL on mediawiki.* to mediawiki identified by 'mediawiki';
+exit
+
+Copy Source CMS Mediawiki
+
+cd /usr/local/src
+wget https://releases.wikimedia.org/mediawiki/1.32/mediawiki-1.32.0.tar.gz
+cp mediawiki-1.32.0.tar.gz /var/www/html/
+cd /var/www/html/
+tar zxvf mediawiki-1.32.0.tar.gz
+mv mediawiki-1.32.0 wiki
+cp -Rf /var/www/html/wiki/mw-config/ /var/www/html/wiki/config
+chmod a+w /var/www/html/wiki/mw-config
+chmod a+w /var/www/html/wiki/config
+chmod -Rf 777 wiki
+chown -Rf www-data.www-data wiki
+
+Restart Apache
+
+/etc/init.d/apache2 restart
+
+Selesaikan Konfigurasi Mediawiki
+
+http://localhost/wiki
+http://ip-address-server/wiki
+
+Versi 1.17 ke atas
+
+Lakukan beberapa konfigurasi untuk Wiki yang akan kita operasikan. Beberapa parameter yang perlu di set adalah,
+
+Your language: id
+Wiki language: id -> lanjut
+Pengecekan Lingkungan > lanjut
+Pengaturan MySQL
+
+  Inang basis data: localhost
+  Nama basis data: mediawiki
+  Prefiks tabel basis data: wiki_
+  Nama pengguna basis data: mediawiki
+  Kata sandi basis data: mediawiki -> lanjut
+
+Mesin penyimpanan: InnoDB
+Set karakter basis data: Biner -> lanjut
+
+Nama wiki:
+Nama Anda:
+Kata sandi:
+Kata sandi lagi:
+Alamat surel:
+Saya sudah bosan, instal saja wikinya. -> lanjut
+
+Instal -> lanjut
+
+Versi < 1.17
+
+Lakukan beberapa konfigurasi untuk Wiki yang akan kita operasikan. Beberapa parameter yang perlu di set adalah,
+
+Wiki Name
+Contact e-mail
+Language 	-> id
+Admin Username	-> admin	
+password	->
+Confirm	-> 	
+
+Database Type	-> mysql
+Database name	-> mediawiki
+DB username	-> mediawiki
+DB password	-> mediawiki
+DB pass Confirm -> mediawiki
+
+Superuser	-> root
+Password	->
+
+Database Prefix -> wiki_
+
+
+Pastikan bahwa Prefix Database yang digunakan adalah wiki_ ini akan memudahkan nanti pada saat replikasi database dari SpeedyWiki
+
+Setelah semua parameter selesai di konfigurasi kita dapat menginstalasi MediaWiki dengan menekan tombol
+
+Install MediaWiki
+
+Terakhir, kita perlu mengcopykan file LocalSettings.php yang merupakan konfigurasi mediawiki ke folder root Wiki melalui perintah
+
+Versi mediawiki yang baru ternyata LocalSettings.php di download, maka langkah yang perlu dilakukan adalah
+
+cd ~/Downloads
+mv LocalSettings.php /var/www/html/wiki/
+chmod 600 /var/www/html/wiki/LocalSettings.php
+
+Untuk versi lama dapat menggunakan perintah
+
+cd /var/www/html/wiki/
+mv config/LocalSettings.php /var/www/html/wiki/
+chmod 600 /var/www/html/wiki/LocalSettings.php
+
+Selesai sudah seluruh proses konfigurasi MediaWiki, Wiki dapat di akses pada alamat Web.
+
+http://localhost/wiki
+
+Untuk Mediawiki versi Baru
+
+Edit
+
+vi /var/www/html/wiki/LocalSettings.php
+
+Masukan
+
+$wgDBadminuser      = mediawiki;
+$wgDBadminpassword  = mediawiki;
+?>
+
+Untuk Mediawiki versi lama
+
+Siapkan untuk replikasi mediawiki
+
+cd /var/www/html/wiki/
+cp AdminSettings.sample AdminSettings.php
+vi AdminSettings.php
+
+Pastikan ada isi
+
+$wgDBadminuser      = 'wikiuser';
+$wgDBadminpassword  = 'wikipassword';
+
+kalau masih belajar bisa berisi
+
+$wgDBadminuser      = 'mediawiki';
+$wgDBadminpassword  = 'mediawiki';
