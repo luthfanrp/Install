@@ -1,0 +1,92 @@
+Install Snort in Ubuntu By: Onno W. Purbo
+
+
+    apt-get install libpcre3 libpcre3-dev libpcrecpp0
+    apt-get install libpcap0.8 libpcap0.8-dev
+    apt-get install libmysqlclient15-dev
+    apt-get install libphp-adodb
+    apt-get install libgd2-xpm libgd2-xpm-dev
+    apt-get install php5-mysql
+    apt-get install php5-gd
+    apt-get install php-image-graph php-image-canvas php-pear
+
+
+alternative install adodb
+
+    cp adodb494.tgz /var
+    cd /var
+    tar zxvf adodb494.tgz
+
+
+
+    /etc/init.d/apache2 restart
+    /etc/init.d/mysql restart
+
+
+    cp -Rf snort-2.6.1.4.tar.gz /usr/local/src/
+    cd /usr/local/src
+    tar zxvf snort-2.6.1.4.tar.gz
+    cd snort-2.6.1.4
+    ./configure --with-mysql
+    make
+    make install
+    groupadd snort
+    useradd -g snort snort
+    mkdir /etc/snort
+    mkdir /etc/snort/rules
+    mkdir /var/log/snort
+
+
+    cp snortrules-snapshot-CURRENT.tar.gz /etc/snort/
+    cd /etc/snort
+    tar zxvf snortrules-snapshot-CURRENT.tar.gz
+
+    cp /usr/local/src/snort-2.6.1.4/etc/* /etc/snort
+    cd /etc/snort/
+    vi /etc/snort/snort.conf
+
+“var RULE_PATH ../rules” -> “var RULE_PATH /etc/snort/rules” output database: log, mysql, user=snort password=snort dbname=snort host=localhost
+
+    vi /etc/rc.local
+
+/usr/local/bin/snort -dev -c /etc/snort/snort.conf -D
+
+
+
+mysql mysql> SET PASSWORD FOR root@localhost=PASSWORD('password');
+
+alternatively
+
+    mysql -u root -p
+
+Enter password: mysql> create database snort; mysql> grant INSERT,SELECT on root.* to snort@localhost; mysql> SET PASSWORD FOR snort@localhost=PASSWORD('snort'); mysql> grant CREATE, INSERT, SELECT, DELETE, UPDATE on snort.* to snort@localhost; mysql> grant CREATE, INSERT, SELECT, DELETE, UPDATE on snort.* to snort; mysql> exit
+
+
+    mysql -u root -p < /usr/local/src/snort-2.6.1.4/schemas/create_mysql snort
+
+password:
+
+    mysql -p
+
+Enter password: mysql> show databases; mysql> use snort mysql> show tables; mysql> exit
+
+
+    cp base-1.3.5.tar.gz /var/www/
+    cd /var/www
+    tar zxvf base-1.3.5.tar.gz
+    mv base-1.3.5 base
+    cd /var/www/base
+    cp base_conf.php.dist base_conf.php
+    vi base_conf.php
+
+$BASE_urlpath = "/base"; $DBlib_path = "/usr/share/php/adodb/"; # $DBlib_path = "/var/adodb/"; $DBtype = "mysql";
+
+$alert_dbname = 'snort'; $alert_host = 'localhost'; $alert_port = ; $alert_user = 'snort'; $alert_password = 'snort';
+
+$archive_exists = 0; $archive_dbname = 'snort'; $archive_host = 'localhost'; $archive_port = ; $archive_user = 'snort'; $archive_password = 'snort';
+
+
+    chown -Rf www-data.www-data /var/www/base
+
+
+Web Access http://localhost/base Setup page CREATE BASE AG Main page 
