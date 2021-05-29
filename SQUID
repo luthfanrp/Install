@@ -1,0 +1,34 @@
+Pastikan DNS berjalan dengan baik, cek
+
+dig www.detik.com
+
+Edit
+
+vi /etc/resolv.conf
+
+nameserver 8.8.8.8
+
+Instalasi Squid
+
+apt -y install squid
+
+Edit konfigurasi squid agar komputer di LAN kita dapat menggunakan Squid tersebut
+
+vi /etc/squid/squid.conf
+
+Beberapa contoh setting yang penting
+
+# visible_hostname 192.168.0.1  # IP address server Squid anda
+
+# Example rule allowing access from your local networks.
+# Adapt to list your (internal) IP networks from where browsing
+# should be allowed
+acl localnet src 10.0.0.0/8     # RFC1918 possible internal network
+acl localnet src 172.16.0.0/12  # RFC1918 possible internal network
+acl localnet src 192.168.0.0/16 # RFC1918 possible internal network
+http_access allow localnet
+
+Restart Squid
+
+service squid restart
+/etc/init.d/squid restart
