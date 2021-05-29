@@ -1,0 +1,48 @@
+BAGIAN INI BISA DI SKIP
+
+
+Proses instalasi dependency harusnya di handel secara automatis oleh installer mediacms, jadi tidak perlu di install manual. Tampaknya di butuhkan Python3, Django3, Celery, PostgreSQL, Redis, ffmpeg
+
+  sudo apt update
+  sudo apt install python3.9
+  sudo apt install python3-django
+  sudo apt install ffmpeg
+  sudo apt install python3-pip
+  sudo apt install postgresql postgresql-contrib
+
+  sudo pip install celery
+  sudo pip install django-celery
+  sudo apt install redis-server
+  sudo pip install celery['redis']
+
+
+Jalankan postgresql
+
+  pg_ctlcluster 12 main start
+
+Install MediaCMS
+
+Instalasi MediaCMS (butuh waktu 30-45 menit-an gitu deh)
+
+  sudo su
+  mkdir /home/mediacms.io
+  cd /home/mediacms.io/
+  git clone https://github.com/mediacms-io/mediacms
+  cd /home/mediacms.io/mediacms/
+  bash ./install.sh
+
+saat proses instalasi ketik
+
+  yes
+  192.168.0.x
+  MediaCMS
+
+Akhirnya akan keluar
+
+MediaCMS installation completed, open browser on http://192.168.0.151 and login with user admin and password cad0ahttoe
+
+Artinya:
+
+    Alamat http://192.168.0.151
+    username admin
+    password cad0ahttoe
