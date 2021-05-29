@@ -1,0 +1,73 @@
+Instalasi MySQL di Ubuntu relatif sederhana hanya menggunakan perintah,
+
+apt-get update
+apt-get -y install mysql-server mysql-client
+
+Biasanya akan di tanya root password. Jika kita masih belajar dapat memasukan root password
+
+123456
+
+Agar lebih aman lakukan secure installation
+
+mysql_secure_installation 
+
+Jawab
+
+Enter current password for root (enter for none): 
+OK, successfully used password, moving on...
+
+Change the root password? [Y/n] n
+ ... skipping.
+
+Remove anonymous users? [Y/n] 
+ ... Success!
+
+Disallow root login remotely? [Y/n] Y
+ ... Success!
+
+Remove test database and access to it? [Y/n] Y
+ ... Success!
+
+Reload privilege tables now? [Y/n] Y
+ ... Success!
+
+
+Untuk menjalankan MySQL Server cukup menggunakan perintah
+
+/etc/init.d/mysql restart 
+
+
+Masuk ke MySQL monitor
+
+
+mysql -u root -p123456
+
+Ketik
+
+mysql> show databases;
+
+Akan keluar
+
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
++--------------------+
+3 rows in set (0.00 sec)
+
+
+Setup database
+
+mysql -u root -p 
+Enter password: 
+
+mysql> create database databasekita; 
+mysql> grant INSERT,SELECT on root.* to user@localhost; 
+mysql> SET PASSWORD FOR user@localhost=PASSWORD('passworduser'); 
+mysql> grant CREATE, INSERT, SELECT, DELETE, UPDATE on databasekita.* to user@localhost; 
+mysql> grant CREATE, INSERT, SELECT, DELETE, UPDATE on databasekita.* to user; 
+mysql> exit
+
+
