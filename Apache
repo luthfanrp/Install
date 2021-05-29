@@ -1,0 +1,67 @@
+Untuk instalasi Web Server Apache saja relatif sederhana melalui perintah
+
+sudo apt update
+sudo apt -y install apache2
+
+Sebaiknya install apache saja seperti di atas jangan di lakukan. Sebaiknya kita menginstalasi secara lengkap Apache, PHP dan database server MySQL
+
+sudo apt-get install apache2 php php-xmlrpc php-mysql php-gd php-cli \
+php-curl mysql-client mysql-server
+
+Ubuntu 16.04
+
+sudo apt-get install apache2 php php-xmlrpc php-mysql php-gd php-cli \
+php-curl mysql-client mysql-server
+
+
+Semua konfigurasi server berada di folder
+
+/etc/apache2
+
+Untuk me-restart Apache Web Server
+
+# /etc/init.d/apache2 restart
+
+File HTML dapat diletakan di folder
+
+/var/www
+
+Ada baiknya melihat-lihat isi file index.html di
+
+/var/www/index.html
+
+
+Apache untuk situs social networking
+
+Untuk Instalasi situs social networking kita perlu meng-enable apache mod_rewrite melalui perintah:
+
+ a2enmod rewrite
+
+Di samping itu juga, perlu di AllowOverride All di konfigurasi default apache
+
+vi /etc/apache2/sites-enabled/000-default
+
+DocumentRoot /var/www
+<Directory />
+     Options FollowSymLinks
+     AllowOverride All
+</Directory>
+<Directory /var/www/>
+     Options Indexes FollowSymLinks MultiViews
+     AllowOverride All
+     Order allow,deny
+     allow from all
+</Directory>
+
+Jangan lupa restart Apache sesudah melakukan hal ini
+
+/etc/init.d/apache2 restart
+
+
+Apache MPM
+
+Entah kenapa ini tampaknya penting
+
+apt-get install apache2-mpm-worker apache2-mpm-prefork apache2-mpm-event apache2-mpm-itk
+
+Untuk Ubuntu versi baru tampaknya ini tidak terlalu penting. 
