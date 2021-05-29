@@ -1,0 +1,23 @@
+kalo mo ngisntall proxy server, tidak usah ngobok-ngobok modem bisa kok. pakai cara sederhana bisa kok :
+
+    install squid dioperator. rubah squid.conf nya.
+    jalankan untuk pertama kali di dos dengan perintah "squid -z"
+    untuk setersunya bisa diinstal sebagai service "squid -i"
+    nah untuk mematikan/menghidupkan bukan "services.msc" cari squid
+    di client di browsernya setting proxy ke "ip" beserta "portnya" operator
+
+cara yang agak susah, yaitu install pcrouter:
+
+    gatewaynya diarahkan ke modem
+    ip dan subnet localnya dirubah tidak sama dengan ip modem
+    di pcrouter diaktifkan proxy servernya, juga aktifkan trasparent proxynya
+    di client tidak usah setting
+
+192.168.1.1    IP: 192.168.1.2, Gateway : 192.168.1.1
+Modem ------- PC Router (IPCop,Mikrotik,PfSense,linux dll)
+                     192.168.2.1
+                          +
+                          + --- Operator IP: 192.168.2.100 Gateway: 192.168.2.1
+                          + --- Client IP: 192.168.2.11-20 Gateway: 192.168.2.1
+
+kira-kira jelas ya semoga membantu terima kasih 
