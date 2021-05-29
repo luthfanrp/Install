@@ -1,0 +1,102 @@
+Bagi anda yang berminat untuk membuat sendiri Server Blog dapat menggunakan Wordpress.
+
+Pertama-tama siapkan beberapa fasilitas pendukung Wordpress seperti MySQL-server, PHP dll, antara lain dapat di install melalui perintah
+
+Untuk Ubuntu 18.04
+
+Edit /etc/apt/sources.list
+
+deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse
+deb http://archive.ubuntu.com/ubuntu bionic-security main universe multiverse
+deb http://archive.ubuntu.com/ubuntu bionic-updates main universe multiverse
+
+Install apps
+
+apt update
+apt -y install apache2 php php-xmlrpc php-mysql php-gd php-cli php-curl \
+mysql-client mysql-server libmysqlclient-dev libphp-adodb \
+php-mysql php-gd php-curl php-pear unzip php-mbstring php7.2-xml php-xmlrpc \
+php php-mysql libapache2-mod-php php-cli php-cgi php-gd
+
+Jika dibutuhkan kita dapat meng-enable module PHP 7 di apache,
+
+a2emod php7.2
+
+pada dasarnya default konfigurasi apache, sudah mengaktifkan php terbaru. Ambil source code Wordpress di
+
+    http://wordpress.org/download/
+    http://wordpress.org/latest.zip
+    http://wordpress.org/latest.tar.gz
+
+Atau bagi anda yang ingin menggunakan Wordpress berbahasa Indonesia dapat mengambil source code-nya di
+
+    http://id.wordpress.org/
+
+Download & copy
+
+wget http://wordpress.org/latest.tar.gz
+cp latest.tar.gz /var/www/html/
+cd /var/www/html
+tar zxvf latest.tar.gz
+cd /var/www/html/wordpress
+chmod -Rf 777 /var/www/html/wordpress/wp-content/
+
+Konfigurasi Wordpress untuk menggunakan database server MySQL
+
+cd /var/www/html/wordpress
+cp wp-config-sample.php wp-config.php
+vi wp-config.php
+
+define('DB_NAME', 'wordpress');
+define('DB_USER', 'wordpress');
+define('DB_PASSWORD', 'wordpress');
+define('DB_HOST', 'localhost');
+
+Siapkan database untuk Wordpress, disini akan digunakan database dengan nama wordpress, user database dengan nama wordpress dan password untuk akses database adalah wordpress. Sedang password root MySQL di set sebagai password. Perintah yang digunakan untuk mengkonfigurasi adalah
+
+mysql
+mysql> SET PASSWORD FOR root@localhost=PASSWORD('password');
+
+Jika password Root MySQL database sudah di set maka kita dapat langsung mengkonfigurasi MySQL menggunakan perintah
+
+# mysql -u root -p
+Enter password:
+create database wordpress;
+grant INSERT,SELECT on root.* to wordpress@localhost;
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on wordpress.* to wordpress@localhost identified by 'wordpress';
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on wordpress.* to wordpress identified by 'wordpress';
+exit
+
+Jika masih belajar dapat menggunakan perintah
+
+
+# mysql -u root -p123456
+
+CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+grant ALL on root.* to wordpress@localhost;
+GRANT ALL ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY 'wordpress';
+grant ALL on wordpress.* to wordpress identified by 'wordpress';
+exit
+
+Restart Web Server
+
+/etc/init.d/apache2 restart
+/etc/init.d/mysql restart
+
+Akses Web Wordpress ke IP address statik dari Web Server anda. Sangat tidak di sarankan ungtuk mengakses ke localhost, kecuali jika Web Wordpress hanya digunakan untuk komputer anda sendiri tidak untuk orang lain. Cara mengakses-nya adalah,
+
+http://ip-address-web-server/wordpress
+install.php
+
+Masukan Data berikut
+
+Judul Situs 	
+Nama Pengguna 	
+Kata sandi, dua kali
+E-mail Anda
+
+Klik pada "Install Wordpress"
+
+Kita dapat login
+
+http://ip-address-web-server/wordpress/wp-login.php
