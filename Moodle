@@ -1,0 +1,219 @@
+Perbaiki Repository
+
+Edit
+
+vi /etc/apt/sources.list
+
+Pastikan
+
+deb http://archive.ubuntu.com/ubuntu bionic main universe multiverse
+deb http://archive.ubuntu.com/ubuntu bionic-security main universe multiverse
+deb http://archive.ubuntu.com/ubuntu bionic-updates main universe multiverse
+
+Save & jalankan
+
+apt update
+
+Instalasi Apps Pendukung
+
+sudo su
+apt update
+apt -y install apache2 php php-xmlrpc php-mysql php-gd php-cli php-curl \
+mysql-client mysql-server libgd-dev php-curl php-pear \
+php-common libapache2-mod-php php-xml imagemagick git unzip \
+php7.3-zip php7.3-intl php7.3-mbstring php7.3-soap
+
+service apache2 restart
+
+Atau Restart Apache
+
+/etc/init.d/apache2 restart
+
+Setup Database
+Kalau Operasional
+
+Setup root password (jika di perlukan saja)
+
+mysql
+mysql> SET PASSWORD FOR root@localhost=PASSWORD('password');
+
+Setup database operasonal dengan username & password akses
+
+# mysql -u root -p
+Enter password:
+create database moodle;
+ALTER DATABASE moodle charset=utf8mb4;
+ALTER DATABASE moodle CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+grant INSERT,SELECT on root.* to moodle@localhost;
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on moodle.* to moodle@localhost identified by "moodlepassword";
+grant CREATE, INSERT, SELECT, DELETE, UPDATE on moodle.* to moodle identified by "moodlepassword";
+exit
+
+Kalau hanya Latihan
+
+Password root 123456789
+
+# mysql -u root -p123456789
+
+CREATE USER 'root'@'%' IDENTIFIED BY '123456789';
+create database moodle;
+ALTER DATABASE moodle charset=utf8mb4;
+ALTER DATABASE moodle CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE USER 'foo'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456789';
+GRANT ALL PRIVILEGES ON database_name.* TO'foo'@'localhost';
+GRANT ALL PRIVILEGES ON moodle.* TO'foo'@'localhost';
+GRANT ALL PRIVILEGES ON moodle.* TO'root'@'localhost';
+CREATE USER 'moodle'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456789';
+GRANT ALL PRIVILEGES ON moodle.* TO'moodle'@'localhost';
+
+
+Atau kalau mau lebih aman
+
+# mysql -u root -p123!@#qweQWE
+
+CREATE USER 'root'@'%' IDENTIFIED BY '123!@#qweQWE';
+create database moodle;
+ALTER DATABASE moodle charset=utf8mb4;
+ALTER DATABASE moodle CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+CREATE USER 'foo'@'localhost' IDENTIFIED WITH mysql_native_password BY '123!@#qweQWE';
+GRANT ALL PRIVILEGES ON database_name.* TO'foo'@'localhost';
+GRANT ALL PRIVILEGES ON moodle.* TO'foo'@'localhost';
+GRANT ALL PRIVILEGES ON moodle.* TO'root'@'localhost';
+CREATE USER 'moodle'@'localhost' IDENTIFIED WITH mysql_native_password BY '123!@#qweQWE';
+GRANT ALL PRIVILEGES ON moodle.* TO'moodle'@'localhost';
+
+exit
+
+/etc/init.d/mysql restart
+
+Siapkan folder /var/moodledata/
+
+Download language pack
+
+cd /usr/local/src
+wget https://download.moodle.org/download.php/direct/langpack/3.8/id.zip
+
+Install language pack
+
+cd /usr/local/src
+mkdir -p /var/moodledata/lang
+cp id.zip /var/moodledata/lang
+cd /var/moodledata/lang
+unzip id.zip
+chmod -Rf 777 /var/moodledata/lang/
+chown -Rf www-data: /var/moodledata/lang/
+
+Install Moodle
+
+Download
+
+cd /usr/local/src
+wget https://download.moodle.org/download.php/direct/stable38/moodle-latest-38.tgz
+
+Install
+
+cd /usr/local/src
+cp moodle-latest-38.tgz /var/www/html/
+cd /var/www/html/
+tar zxvf moodle-latest-38.tgz
+chown -Rf www-data: /var/moodledata/
+chmod -Rf 777 /var/www/html/moodle	
+chown -Rf www-data: /var/www/html/moodle
+
+Lanjutkan dengan konfigurasi via web
+
+http://localhost/moodle
+http://ip-address/moodle
+
+
+Language       -> id  -> Selanjutnya
+Web Address           http://ip-address/moodle
+Moodle Directory      /var/www/html/moodle
+Data Directory        /var/moodledata/
+Confirm paths         -> Selanjutnya
+Choose database driver
+Type -> MySQL         -> Selanjutnya
+Database settings
+  Improved MySQL (native/mysqli)
+  Database host      localhost
+  Database name      moodle
+  Database user      moodle
+  Database password  moodle
+  Tables prefix      mdl_ 
+  unix socket (check) -> Selanjutnya
+
+Installation      -> Lanjut
+Server checks     -> Selanjutnya
+
+Installation
+  Nama Pengguna
+  Password 
+  Nama Depan
+  Nama akhir
+  Alamat Email
+  Kota
+  Pilih Negara             -> Perbaharui Profile
+
+Installation
+  Nama lengkap situs
+  Nama singkat untuk situs (mis. kata tunggal)
+  Keterangan halaman depan -> Save Changes
+
+Akses Moodle
+
+http://localhost/moodle/
+http://ip-address/moodle/
+
+
+Edit php.ini
+Upload file besar
+
+Edit php.ini
+
+vi /etc/php5/apache2/php.ini
+
+atau untuk PHP 7.0
+
+vi /etc/php/7.0/apache2/php.ini
+
+Edit
+
+upload_max_filesize = 100M
+
+Tuning
+
+WARNING: ini tidak di perlukan.
+
+PHP.ini settings:
+
+vi /etc/php5/cli/php.ini
+
+atau untuk PHP 7.0
+
+vi /etc/php/7.0/apache2/php.ini
+
+
+Pastikan
+
+[opcache]
+opcache.enable = 1
+opcache.memory_consumption = 128
+opcache.max_accelerated_files = 4000
+opcache.revalidate_freq = 60
+
+; Required for Moodle
+opcache.use_cwd = 1
+opcache.validate_timestamps = 1
+opcache.save_comments = 1
+opcache.enable_file_override = 0
+
+; If something does not work in Moodle
+;opcache.revalidate_path = 1 ; May fix problems with include paths
+;opcache.mmap_base = 0x20000000 ; (Windows only) fix OPcache crashes with event id 487
+
+; Experimental for Moodle 2.6 and later
+;opcache.fast_shutdown = 1
+;opcache.enable_cli = 1 ; Speeds up CLI cron
+;opcache.load_comments = 0 ; May lower memory use, might not be compatible with add-ons and other apps.
