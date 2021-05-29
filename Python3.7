@@ -1,0 +1,40 @@
+Update repository
+
+  sudo apt update
+
+Langkah Pertama
+
+	sudo apt-get install wget build-essential checkinstall
+
+Langkah Kedua
+
+	sudo apt-get install libreadline-gplv2-dev libncursesw5-dev 		libssl-dev \
+    	libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev 		zlib1g-dev
+
+Masuk Directory
+
+  cd /usr/src
+  
+download python3.7
+
+  sudo wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz
+  
+Extract Python3.7
+
+	sudo tar xzf Python-3.7.9.tgz
+
+Masuk directory download an python
+
+  cd Python-3.7.9
+  
+Install
+
+  sudo ./configure --enable-optimizations
+  
+  sudo make altinstall
+
+Cek Python
+
+	python3.7 -V
+
+	Python-3.7.9
